@@ -1,20 +1,18 @@
-typedef unsigned int u32;
-extern int _ZN5Model8LoadFileER13SharedFilePtr(void*);
-extern int _ZN9ModelBase7SetFileEP8BMD_Fileii(void*, int, int, int);
-extern void func_ov013_02111430(char* t);
-extern void* data_ov051_021116b0[];
+extern void *_ZN5Model8LoadFileER13SharedFilePtr(void *filePtr);
+extern void _ZN9ModelBase7SetFileEP8BMD_Fileii(void *self, void *file, int a, int b);
+extern void func_ov013_02111430(void *c);
 
-int func_ov013_021115cc(void* c) {
-    int eq = (int)(*(unsigned short*)((char*)c + 0xc) == 0x125);
-    if (eq != 0)
-        *(unsigned char*)((char*)c + 0x124) = 0;
-    else
-        *(unsigned char*)((char*)c + 0x124) = 1;
-    {
-        unsigned char i = *(unsigned char*)((char*)c + 0x124);
-        int file = _ZN5Model8LoadFileER13SharedFilePtr(data_ov051_021116b0[i]);
-        _ZN9ModelBase7SetFileEP8BMD_Fileii((char*)c + 0xd4, file, 1, -1);
-    }
-    func_ov013_02111430((char*)c);
+extern void *data_ov013_021116b0[];
+
+int func_ov013_021115cc(void *c)
+{
+    unsigned char *pc = (unsigned char *)c;
+    void *file;
+    int eq = (*(unsigned short *)(pc + 0xc) == 0x125);
+
+    *(pc + 0x124) = eq ? 0 : 1;
+    file = _ZN5Model8LoadFileER13SharedFilePtr(data_ov013_021116b0[*(pc + 0x124)]);
+    _ZN9ModelBase7SetFileEP8BMD_Fileii(pc + 0xd4, file, 1, -1);
+    func_ov013_02111430(c);
     return 1;
 }
