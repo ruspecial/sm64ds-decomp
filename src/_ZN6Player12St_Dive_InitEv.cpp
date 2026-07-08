@@ -15,7 +15,7 @@ extern "C" int _ZN6Player12St_Dive_InitEv(void* thisptr)
     _ZN5Sound13PlayCharVoiceEjjRK7Vector3(p[0x6d9], data_ov002_020ff100[(r >> 4) & 1], *(Vector3*)(p + 0x74));
     _ZN6Player7SetAnimEji5Fix12IiEj(thisptr, 0x40, 0x40000000, 0x1000, 0);
     *(unsigned char*)(p + 0x6e3) = 0;
-    int* yv = (int*)(((long long)(int)(p + 0x98)) & 0xFFFFFFFFFFFFFFFFLL);
+    int* yv = (int*)(((int)p + 0x98) & 0xFFFFFFFFFFFFFFFF);
     *(int*)(p + 0xa8) = 0x1e000;
     yv[0] += 0xf000;
     if (*(int*)(p + 0x98) > 0x28000) *(int*)(p + 0x98) = 0x28000;

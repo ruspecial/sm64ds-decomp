@@ -1,16 +1,17 @@
-extern void MultiCopyHalf(void *dst, void *src, int n);
+extern void MultiCopyHalf(int a, void* dst, int n);
 
-void func_0206853c(char *self, void *src, unsigned int flags, int s)
+void func_0206853c(char* c, int arg1, unsigned int flags, int arg3)
 {
     int i;
-    int cnt;
-    cnt = 1;
-    MultiCopyHalf(src, self + 0x35e, 0x14a);
-    for (i = 0; i < 0xf; i++) {
-        if (flags & (2 << i)) cnt = (cnt + 1) & 0xff;
+    unsigned char n = 1;
+    MultiCopyHalf(arg1, c + 0x35e, 0x14a);
+    for (i = 0; i < 15; i++) {
+        if (flags & (2 << i)) {
+            n = (unsigned char)(n + 1);
+        }
     }
-    *(unsigned char *)(self + 0x358) = (unsigned char)cnt;
-    *(short *)(self + 0x35a) = (short)(flags | 1);
-    *(short *)(self + 0x35c) = (short)s;
-    *(unsigned char *)(((long long)(int)(self + 0x4ac)) & 0xFFFFFFFFFFFFFFFFLL) += 1;
+    *(unsigned char*)(c + 0x358) = n;
+    *(unsigned short*)(c + 0x35a) = (unsigned short)(flags | 1);
+    *(unsigned short*)(c + 0x35c) = (unsigned short)arg3;
+    (*(unsigned char*)(c + 0x4ac))++;
 }
