@@ -1,6 +1,6 @@
-// NONMATCHING: different op / idiom (div=24). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: register-coloring/scheduling cascade (div=22). Instructions all
+// present; idx colors r0 vs ROM's r1 and the dx/dy struct loads schedule
+// differently, cascading register renames through the body.
 struct Quad { unsigned char b0, b1, b2, b3; };
 extern struct Quad data_020a0de8[];
 extern unsigned char data_020a0e40[];

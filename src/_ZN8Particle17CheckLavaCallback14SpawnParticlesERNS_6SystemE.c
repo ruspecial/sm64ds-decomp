@@ -1,20 +1,5 @@
-//cpp
-// NONMATCHING: different op / idiom (div=18). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-struct Vector3 { int x, y, z; Vector3(int a,int b,int c):x(a),y(b),z(c){} Vector3(){} };
-struct Actor;
-
-struct RaycastGround {
-    char pad[0x50];
-    RaycastGround();
-    ~RaycastGround();
-    void SetObjAndPos(const Vector3 &pos, Actor *obj);
-    int DetectClsn();
-};
-
 struct Node {
-    Node *next;
+    struct Node *next;
     char p4[4];
     int f8;
     int fc;
@@ -27,35 +12,38 @@ struct Node {
     unsigned short f2e;
 };
 
-struct System;
+extern void _ZN8Particle14SimpleCallback14SpawnParticlesERNS_6SystemE(void *thisp, void *sys);
+extern void _ZN13RaycastGroundC1Ev(void *rg);
+extern void _ZN13RaycastGround12SetObjAndPosERK7Vector3P5Actor(void *rg, void *v, void *actor);
+extern int _ZN13RaycastGround10DetectClsnEv(void *rg);
+extern int func_02037e38(unsigned int *p);
+extern void _ZN13RaycastGroundD1Ev(void *rg);
 
-extern "C" int func_02037e38(unsigned int *p);
+void _ZN8Particle17CheckLavaCallback14SpawnParticlesERNS_6SystemE(void *thisp, void *sys) {
+    struct Node *n;
 
-namespace Particle {
-struct System {};
-struct SimpleCallback { void SpawnParticles(System &sys); };
-struct CheckLavaCallback : SimpleCallback { void SpawnParticles(System &sys); };
+    _ZN8Particle14SimpleCallback14SpawnParticlesERNS_6SystemE(thisp, sys);
 
-void CheckLavaCallback::SpawnParticles(System &sys)
-{
-    SimpleCallback::SpawnParticles(sys);
-
-    Node *n = *(Node **)((char *)&sys + 8);
+    n = *(struct Node **)((char *)sys + 8);
     while (n != 0) {
         int sx = n->f14 + n->f8;
         int sy = n->f18 + n->fc;
         int sz = n->f1c + n->f10;
-        RaycastGround rg;
-        Vector3 v(sx << 3, (sy << 3) + 0x12c000, sz << 3);
-        rg.SetObjAndPos(v, 0);
-        if (rg.DetectClsn() != 0) {
-            if (func_02037e38((unsigned int *)((char *)&rg + 0x14)) != 1) {
+        char rg[0x50];
+        int v[3];
+        _ZN13RaycastGroundC1Ev(rg);
+        v[1] = (sy << 3) + 0x12c000;
+        v[0] = sx << 3;
+        v[2] = sz << 3;
+        _ZN13RaycastGround12SetObjAndPosERK7Vector3P5Actor(rg, v, 0);
+        if (_ZN13RaycastGround10DetectClsnEv(rg) != 0) {
+            if (func_02037e38((unsigned int *)(rg + 0x14)) != 1) {
                 n->f2e = n->f2c;
             } else {
-                n->f18 = (*(int *)((char *)&rg + 0x44) + 0x7000 >> 3) - n->fc;
+                n->f18 = ((*(int *)(rg + 0x44) + 0x7000) >> 3) - n->fc;
             }
         }
+        _ZN13RaycastGroundD1Ev(rg);
         n = n->next;
     }
-}
 }

@@ -1,6 +1,7 @@
-// NONMATCHING: different op / idiom (div=18). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: pure register-coloring wall (div=6). All instructions match;
+// o (c+0x300) colors r3 vs r2 and the laundered decrement ptr (c+0x3c6, same
+// addr as o->f) colors r2 vs r3. Pool-loaded launder always claims the low
+// register; resists decl-order/launder/spelling permutation.
 struct S300 { char pad[0xc6]; unsigned short f; };
 extern int IsOnWall(void* thiz);
 extern void* GetWallResult(void* thiz);
@@ -24,7 +25,7 @@ void func_ov062_02118a50(char* c){
   }
   struct S300* o = (struct S300*)(c+0x300);
   if (o->f != 0) {
-    unsigned short* t = (unsigned short*)(c+0x3c6); *t = *t - 1;
+    unsigned short* t = (unsigned short*)(((long long)(int)(c+0x3c6)) & 0xFFFFFFFFFFFFFFFFLL); *t = *t - 1;
     if (o->f != 0) return;
     func_ov062_02117994(c, 8);
     return;

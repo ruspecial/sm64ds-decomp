@@ -1,31 +1,24 @@
-//cpp
-// NONMATCHING: register allocation (div=15). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-typedef int Fix12;
-struct Matrix4x3;
-struct G3i {
-    static void PerspectiveW_(Fix12, int, int, int, int, int, bool, Matrix4x3*);
-};
 extern short data_02082214[];
+extern void _ZN3G3i13PerspectiveW_E5Fix12IiES1_S1_S1_S1_S1_bP9Matrix4x3(
+    int a0, int a1, int a2, int a3, int a4, int a5, int a6, void *a7);
 
-extern "C" void func_ov007_020c0078(char* c)
+void func_ov007_020c0078(char *c)
 {
-    *(int*)0x4000580 = *(unsigned char*)(c + 0xb8)
-                     | (*(unsigned char*)(c + 0xba) << 8)
-                     | (*(unsigned char*)(c + 0xb9) << 16)
-                     | (*(unsigned char*)(c + 0xbb) << 24);
+    *(int *)0x4000580 = *(unsigned char *)(c + 0xb8)
+                      | (*(unsigned char *)(c + 0xba) << 8)
+                      | (*(unsigned char *)(c + 0xb9) << 16)
+                      | (*(unsigned char *)(c + 0xbb) << 24);
 
-    int a = (int)*(unsigned short*)(c + 0xd4) >> 4;
-    G3i::PerspectiveW_(
+    int a = (int)*(unsigned short *)(c + 0xd4) >> 4;
+    _ZN3G3i13PerspectiveW_E5Fix12IiES1_S1_S1_S1_S1_bP9Matrix4x3(
         data_02082214[a * 2],
         data_02082214[a * 2 + 1],
-        ((unsigned int)*(int*)(c + 0xbc) >> 0x14) | (*(int*)(c + 0xc0) << 12),
-        *(int*)(c + 0xc4),
-        *(int*)(c + 0xc8),
+        ((unsigned int)*(int *)(c + 0xbc) >> 0x14) | (*(int *)(c + 0xc0) << 12),
+        *(int *)(c + 0xc4),
+        *(int *)(c + 0xc8),
         0x1000,
-        true,
-        (Matrix4x3*)(c + 0x74));
+        1,
+        (void *)(c + 0x74));
 
-    *(int*)0x400044c = 0;
+    *(int *)0x400044c = 0;
 }

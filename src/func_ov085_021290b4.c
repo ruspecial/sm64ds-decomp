@@ -1,6 +1,8 @@
-// NONMATCHING: extra logic (you do more) (div=23). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: div=16. Logic verified vs ROM. Residual: mwcc lays out the
+// v==0 message block AFTER the switch default (0x133) block; ROM places it
+// between the 0x134 and 0x133 blocks. Same instructions, only block layout +
+// two commutative add / pool-load register allocations differ. (The switch
+// defeats the moveq/ldrne cmov merge of the 0x134/0x133 returns.)
 extern signed char data_0209f2f8;
 extern int func_020138dc(void);
 extern int func_02013a44(void);
@@ -12,14 +14,16 @@ unsigned short func_ov085_021290b4(char* c) {
     if (data_0209f2f8 == 0x32) {
         int v = func_020138dc();
         if (v != 0) {
-            if (v == 0x1c) return 0x134;
-            return 0x133;
+            switch (v) {
+                case 0x1c: return 0x134;
+                default: return 0x133;
+            }
         }
         return ObjectMessageIDToActualMessageID((short)r4) + r5[2];
     }
     if (*(unsigned char*)(c + 0x20b) == 1) {
         if (func_02013a44() != 0) {
-            return ObjectMessageIDToActualMessageID((short)(r5[2] + 0xb0a));
+            return ObjectMessageIDToActualMessageID((unsigned short)(0xb0a + r5[2]));
         }
     }
     return ObjectMessageIDToActualMessageID((short)r4) + r5[2];

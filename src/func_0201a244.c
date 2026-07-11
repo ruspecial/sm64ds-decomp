@@ -19,7 +19,7 @@ int func_0201a244(int a0, int a1, int a2, int a3, int arg5)
         return 1;
     }
     data_0209d4f8 = 1;
-    s5 = arg5;
+    s5 = *(volatile int *)&arg5;
     r3v = a3;
     if (a3 == 0) {
         r3v = _ZN6Memory8AllocateEji(s5, -4);

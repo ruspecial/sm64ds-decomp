@@ -1,7 +1,8 @@
 //cpp
-// NONMATCHING: different op / idiom (div=10). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: only the IRQ-guarded flag test diverges (1 extra `mov r1,r6`;
+// mwcc defers the flag load past `mov r5,r0` and copies the base instead of
+// loading the word into a scratch reg like the ROM). RMW + rest match byte-exact.
+// Register-allocation/scheduling wall at mwccarm 1.2/sp2p3.
 typedef unsigned int u32;
 extern "C" {
 extern char data_020a8180[];
@@ -17,15 +18,11 @@ extern "C" int func_02060484(int a, int b, int c, int d, int e, int f)
     char* g = data_020a8180;
     unsigned int irq = IRQ::Disable();
     if (*(u32*)(g + 0x34) & 4) {
-        char* p = g + 0xd4;
         do {
-            func_020580f0(p);
+            func_020580f0(g + 0xd4);
         } while (*(u32*)(g + 0x34) & 4);
     }
-    {
-        u32* fp = (u32*)(g + 0x34);
-        *fp = *fp | 4;
-    }
+    *(u32*)(((int)g + 0x34) & 0xFFFFFFFFFFFFFFFFLL) |= 4;
     IRQ::Restore(irq);
     *(int*)(g + 0x18) = b;
     *(int*)(g + 0x1c) = a;

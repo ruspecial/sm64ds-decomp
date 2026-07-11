@@ -15,10 +15,7 @@ void func_ov096_02136fd4(Actor* thiz)
     func_ov096_02136e54(thiz, v / 0x3c);
     return;
 rest:;
-    {
-        int* q = (int*)(c + 0xec);
-        *q |= 1;
-    }
+    *(int*)(((int)c + 0xec) & 0xFFFFFFFFFFFFFFFFLL) |= 1;
     *(int*)(c + 0x33c) = 0;
     {
         Actor* p = _ZN5Actor13ClosestPlayerEv();

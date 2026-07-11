@@ -1,7 +1,4 @@
 //cpp
-// NONMATCHING: different op / idiom (div=28). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
 struct C;
 extern "C" void func_ov006_021050bc(C* c);
 
@@ -11,22 +8,20 @@ typedef void (C::*PMF)(int);
 extern PMF data_ov006_02142840[];
 
 extern "C" void func_ov006_02106fdc(C* c) {
-    func_ov006_021050bc(c);
-    int found = 0;
     int i = 0;
-    *(unsigned char*)((char*)c + 0x4000 + 0xfe9) = 1;
-    if (*(int*)((char*)c + 0x4000 + 0xcb8) > 0) {
-        do {
-            unsigned char k = *(unsigned char*)((char*)c + i + 0x4000 + 0xefa);
-            (c->*data_ov006_02142840[k])(i);
-            i++;
-            if (k != 0)
-                found++;
-        } while (i < *(int*)((char*)c + 0x4000 + 0xcb8));
+    int found = 0;
+    func_ov006_021050bc(c);
+    char *self = (char*)c;
+    *(unsigned char*)(self + 0x4000 + 0xfe9) = 1;
+    for (i = 0; i < *(int*)(self + 0x4000 + 0xcb8); i++) {
+        unsigned char k = *(unsigned char*)(self + i + 0x4000 + 0xefa);
+        (c->*data_ov006_02142840[k])(i);
+        if (k != 0)
+            found++;
     }
     if (found != 0)
         return;
-    *(int*)((char*)c + 0x4000 + 0xca8) = 4;
-    *(unsigned char*)((char*)c + 0x4000 + 0xfdf) = 1;
-    *(short*)((char*)c + 0x4e00 + 0xc4) = 0x40;
+    *(int*)(self + 0x4000 + 0xca8) = 4;
+    *(unsigned char*)(self + 0x4000 + 0xfdf) = 1;
+    *(short*)(self + 0x4e00 + 0xc4) = 0x40;
 }

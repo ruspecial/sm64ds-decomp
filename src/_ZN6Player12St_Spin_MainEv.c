@@ -33,11 +33,13 @@ int _ZN6Player12St_Spin_MainEv(struct Player *thiz)
         _ZN6Player11ChangeStateERNS_5StateE(thiz, &data_ov002_02110424);
     }
     if (*(u16*)((char*)data_0209f49c + (&data_020a0e40)[0] * 0x18) & 2) {
+        s16 *p = (s16*)(int)(((long long)(int)((char*)thiz + 0x8e)) & 0xFFFFFFFFFFFFFFFFLL);
         thiz->field_a0 = -0x9000;
-        thiz->field_8e += 0x2000;
+        *p += 0x2000;
     } else {
+        s16 *p = (s16*)(int)(((long long)(int)((char*)thiz + 0x8e)) & 0xFFFFFFFFFFFFFFFFLL);
         thiz->field_a0 = -0xc000;
-        thiz->field_8e += 0x1800;
+        *p += 0x1800;
     }
     func_ov002_020bedd4(thiz);
     return 1;

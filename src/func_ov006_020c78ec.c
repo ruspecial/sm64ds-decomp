@@ -1,29 +1,28 @@
-//cpp
-// NONMATCHING: base materialization / addressing (div=11). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern "C" int data_ov006_02140428;
-extern "C" void _Z14ApproachLinearRiii(int &r, int b, int c);
-extern "C" void _ZN5Sound12PlayBank2_2DEj(unsigned int);
-extern "C" void func_ov006_020c8c78(int a0, int a1);
-extern "C" void func_ov006_020c8768(char *p);
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef short s16;
 
-extern "C" void func_ov006_020c78ec(char *thiz)
+extern int data_ov006_02140428;
+
+extern void _Z14ApproachLinearRiii(int* r, int target, int step);
+extern void _ZN5Sound12PlayBank2_2DEj(unsigned int id);
+extern void func_ov006_020c8c78(int a, int b);
+extern void func_ov006_020c8768(char* p);
+
+void func_ov006_020c78ec(char* c)
 {
-    *(short*)(thiz + 0x32) = *(short*)(thiz + 0x32) - 1;
-    if (*(short*)(thiz + 0x32) == 0) {
-        _Z14ApproachLinearRiii((&data_ov006_02140428)[0], 0, 1);
+    (*(s16*)(int)(((long long)(int)(c + 0x32)) & 0xFFFFFFFFFFFFFFFFLL))--;
+    if (*(s16*)(c + 0x32) == 0) {
+        _Z14ApproachLinearRiii(&data_ov006_02140428, 0, 1);
         _ZN5Sound12PlayBank2_2DEj(0x130);
-        func_ov006_020c8c78(*(short*)(thiz + 0x36), 0xc0);
-        func_ov006_020c8768(thiz);
-        return;
+        func_ov006_020c8c78(*(s16*)(c + 0x36), 0xc0);
+        func_ov006_020c8768(c);
+    } else {
+        int m = 0x6c000;
+        *(int*)(c + 0x20) = (int)((*(int*)(c + 0x20) * 0xc00LL + 0x800) >> 12);
+        if (*(int*)(c + 0x14) < -m)
+            *(int*)(c + 0x14) = -m;
+        else if (*(int*)(c + 0x14) > m)
+            *(int*)(c + 0x14) = m;
     }
-    *(int*)(thiz + 0x20) =
-        (int)(((long long)*(int*)(thiz + 0x20) * 0xc00 + 0x800) >> 12);
-    if (*(int*)(thiz + 0x14) < -0x6c000) {
-        *(int*)(thiz + 0x14) = -0x6c000;
-        return;
-    }
-    if (*(int*)(thiz + 0x14) > 0x6c000)
-        *(int*)(thiz + 0x14) = 0x6c000;
 }

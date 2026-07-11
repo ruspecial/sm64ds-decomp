@@ -1,53 +1,37 @@
-//cpp
-// NONMATCHING: missing logic (ROM does more) (div=8). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-struct CapEnemy {
-    int GetCapState();
-    char pad[0xb0];
-    int field_b0;
-    char pad2[0xf4 - 0xb0 - 4];
-    int field_f4;
-    char pad3[0x111 - 0xf4 - 4];
-    unsigned char field_111;
-    char pad4[0x113 - 0x111 - 1];
-    unsigned char field_113;
-    char pad5[0x17f - 0x113 - 1];
-    unsigned char field_17f;
-};
+extern char data_0209f2d8;
+extern int *_ZN5Actor13ClosestPlayerEv();
 
-extern int data_0209f2d8;
-extern "C" int *_ZN5Actor13ClosestPlayerEv(void *self);
+int _ZN8CapEnemy11GetCapStateEv(char *self)
+{
+    unsigned char val;
+    int check;
+    unsigned int b;
+    int tmp;
+    unsigned char *p2;
 
-int CapEnemy::GetCapState() {
-    if (field_111 == 0) {
+    if (*(unsigned char *)(self + 0x111) == 0) {
         return 2;
     }
-
-    unsigned char val = *(unsigned char *)&data_0209f2d8;
-    int check = (val == 1) ? 1 : 0;
+    val = *(unsigned char *)&data_0209f2d8;
+    check = 1;
+    if (val != 1) check = 0;
     if (check == 0) {
-        int *p = _ZN5Actor13ClosestPlayerEv(this);
+        int *p = _ZN5Actor13ClosestPlayerEv(self);
         if (p != 0) {
-            int s = field_113 & 7;
-            int ps = p[2];
-            if (s == ps) {
+            if ((*(unsigned char *)(self + 0x113) & 7) == p[2]) {
                 return 0;
             }
         }
     }
-
-    unsigned int b = field_17f;
+    b = *(unsigned char *)(self + 0x17f);
     b = (b << 0x1e) >> 0x1f;
     if (b == 0) {
         return 0;
     }
-
-    field_111 = 0;
-    const int off = 0x113;
-    int tmp = field_f4;
-    unsigned char *p2 = (unsigned char *)this + off;
-    field_b0 = tmp;
+    *(unsigned char *)(self + 0x111) = 0;
+    p2 = (unsigned char *)(((long long)(int)(self + 0x113)) & 0xFFFFFFFFFFFFFFFFLL);
+    tmp = *(int *)(self + 0xf4);
+    *(int *)(self + 0xb0) = tmp;
     *p2 = *p2 & 7;
     return 1;
 }

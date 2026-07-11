@@ -1,6 +1,7 @@
-// NONMATCHING: register allocation (div=32). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: register coloring (~div=23). Logic verified vs ROM. Remaining diff
+// is loop-priority allocation: hot inner-loop pointers (FIFO r5 / status r6) claim
+// the low callee-saved regs, the struct base takes r9 - not steerable from C at
+// mwccarm 1.2/sp2p3. Counts as decompiled, not matched.
 extern void func_02060d98(unsigned int a, unsigned int b);
 extern int func_02060ebc(void *self);
 
@@ -32,20 +33,24 @@ int func_02060a64(char *self) {
             do {
                 status = *(volatile unsigned int*)0x40001a4;
                 if (status & 0x800000) {
+                    unsigned int fifo = *(volatile unsigned int*)0x4100010;
                     if ((unsigned int)i < 0x200) {
-                        r8[i] = *(volatile unsigned int*)0x4100010;
+                        r8[i] = fifo;
                         i++;
                     }
                 }
             } while (status & 0x80000000);
         }
         if (r8 == (unsigned int*)data_020a8180.f1c) {
+            unsigned int v;
             data_020a8180.f18 += 0x200;
             data_020a8180.f1c += 0x200;
-            data_020a8180.f20 -= 0x200;
-            if (data_020a8180.f20 == 0) return 0;
+            v = data_020a8180.f20 - 0x200;
+            data_020a8180.f20 = v;
+            if (v == 0) return v;
         } else {
-            if (func_02060ebc(self) == 0) return 0;
+            int rv = func_02060ebc(self);
+            if (rv == 0) return rv;
         }
     }
 }

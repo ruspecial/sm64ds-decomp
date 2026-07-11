@@ -1,6 +1,7 @@
-// NONMATCHING: push-set / frame (div=26). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: div=4 PURE SCHEDULING. mwcc hoists the independent
+// `add r2,r4,#0x264` into the load-use delay slot after ldr [r4,#0x264];
+// ROM places the `cmp` there instead. Same instructions, size 0xf8 matches,
+// only the add/cmp/pool-load ordering differs. Logic verified vs ROM.
 extern int func_0203d974(void);
 extern void func_ov075_02115134(int c);
 extern int func_0203da9c(void);
@@ -37,7 +38,7 @@ void func_ov075_021190a4(int c)
     }
 
     if (*(int*)(c + 0x264) > 0) {
-        int *q = (int*)(c + 0x264);
+        int *q = (int*)(((long long)(int)(c + 0x264)) & 0xFFFFFFFFFFFFFFFFLL);
         *q = *q - data_0208ee44[0];
         return;
     }

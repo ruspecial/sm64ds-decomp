@@ -1,6 +1,9 @@
-// NONMATCHING: different op / idiom (div=13). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NEAR-MISS div=12/47: logic verified correct vs ROM. Whole divergence is the tail
+// argument-marshalling schedule for func_02018cbc's two by-value Pairs. ROM materializes
+// thiz->r0 and flag->r1 mid-copy, freeing the callee-saved r5/r4 (thiz/flag) so the 2nd
+// struct copy reuses them; mwcc defers both moves to the end and copies via r0/ip instead.
+// Pure scheduling/coloring wall. Tried: named locals (13), inlined both (12), name m only,
+// name n only -- all stable at 12.
 extern int data_020a8064[2];
 extern int data_020a806c[2];
 extern int data_020a8074;
@@ -19,9 +22,6 @@ int func_02018c00(int *thiz, int flag, int index)
         thiz[8] = flag;
         return 1;
     }
-    {
-        struct Pair m = *(struct Pair*)0x27ffe50;
-        struct Pair n = *(struct Pair*)0x27ffe58;
-        return func_02018cbc(thiz, flag, index, &data_020a8074, m, n);
-    }
+    return func_02018cbc(thiz, flag, index, &data_020a8074,
+                         *(struct Pair*)0x27ffe50, *(struct Pair*)0x27ffe58);
 }

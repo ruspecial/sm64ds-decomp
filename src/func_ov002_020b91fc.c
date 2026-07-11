@@ -1,23 +1,18 @@
-// NONMATCHING: base materialization / addressing (div=16). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef short s16;
 typedef int s32;
 typedef unsigned int u32;
 
-struct Vector3_16f;
-struct Callback;
 extern u8 DecIfAbove0_Byte(u8* p);
 extern void _ZN9ActorBase18MarkForDestructionEv(void* p);
-extern void* _ZN8Particle6System3NewEjj5Fix12IiES2_S2_PK11Vector3_16fPNS_8CallbackE(
-    u32 id, u32 a, int x, int y, int z, const struct Vector3_16f* rot, struct Callback* cb);
+extern int _ZN8Particle6System3NewEjj5Fix12IiES2_S2_PK11Vector3_16fPNS_8CallbackE(
+    int id, u32 a, int x, int y, int z, int rot, int cb);
 
 void func_ov002_020b91fc(char* c)
 {
     int f;
-    int x, y, z;
+    int v[3];
 
     do {
         if (*(int*)(c + 8) == 0xffff) break;
@@ -28,12 +23,16 @@ void func_ov002_020b91fc(char* c)
         _ZN9ActorBase18MarkForDestructionEv(c);
     } while (0);
 
-    y = *(int*)(c + 0x60);
-    z = *(int*)(c + 0x64);
-    x = *(int*)(c + 0x5c);
-    y = y + 0x82000;
-    *(void**)(c + 0x3c4) = _ZN8Particle6System3NewEjj5Fix12IiES2_S2_PK11Vector3_16fPNS_8CallbackE(
-        *(u32*)(c + 0x3c4), 0x104,
-        x, y, z,
-        0, 0);
+    {
+        int x = *(int*)(c + 0x5c);
+        int z = *(int*)(c + 0x64);
+        int y = *(int*)(c + 0x60) + 0x82000;
+        v[0] = x;
+        v[1] = y;
+        v[2] = z;
+        *(int*)(c + 0x3c4) = _ZN8Particle6System3NewEjj5Fix12IiES2_S2_PK11Vector3_16fPNS_8CallbackE(
+            *(volatile int*)(c + 0x3c4), 0x104,
+            ((volatile int*)v)[0], ((volatile int*)v)[1], z,
+            0, 0);
+    }
 }

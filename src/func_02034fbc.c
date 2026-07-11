@@ -1,11 +1,11 @@
-// NONMATCHING: register allocation (div=7). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: 0x64/0x66 overlay IDs are pooled (ldr) in ROM, not mov; mwcc
+// 1.2/sp2p3 always emits mov for these encodable immediates. Also a 3-insn
+// r0/r1 coloring diff in the flag test. Logic verified vs ROM.
 typedef unsigned int u32;
 extern int LoadArchive(int idx);
 extern void func_0201a458(void);
 extern void *_ZN4Heap10SetDefaultEv(void);
-extern void HeapUse(void *h);
+extern void *HeapUse(void *h);
 extern void LoadTextNarcs(void);
 extern void func_0201a5f8(int);
 extern void LoadOverlay(int id);
@@ -28,8 +28,7 @@ void func_02034fbc(void)
     func_0201a5f8(6);
     LoadOverlay(0x64);
     LoadOverlay(0x66);
-    data_020a0c5c = func_0201a3e4();
-    HeapUse(data_020a0c5c);
+    data_020a0c5c = HeapUse(func_0201a3e4());
     LoadArchive(7);
     HeapUse(data_020a0c5c);
 }

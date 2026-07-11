@@ -1,27 +1,28 @@
-//cpp
-// NONMATCHING: register allocation (div=17). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-struct Vector3 { int x, y, z; };
+typedef struct Vector3 { int x, y, z; } Vector3;
 
-extern "C" void *_ZN5Actor13ClosestPlayerEv(void *thiz);
-extern "C" int Vec3_Dist(const struct Vector3 *a, const struct Vector3 *b);
-extern "C" short Vec3_HorzAngle(const struct Vector3 *a, const struct Vector3 *b);
-extern "C" int AngleDiff(int a, int b);
-extern "C" void func_ov102_0214b384(void *thiz, int a);
+extern void *_ZN5Actor13ClosestPlayerEv(void *thiz);
+extern int Vec3_Dist(const Vector3 *a, const Vector3 *b);
+extern short Vec3_HorzAngle(const Vector3 *a, const Vector3 *b);
+extern int AngleDiff(int a, int b);
+extern void func_ov102_0214b384(void *thiz, int a);
 
-extern "C" void func_ov102_0214b988(void *thiz)
+void func_ov102_0214b988(void *thiz)
 {
     unsigned char *c = (unsigned char *)thiz;
     unsigned char *pl;
-    struct Vector3 v;
+    Vector3 v;
 
     *(int *)(c + 0x38c) = 0;
     pl = (unsigned char *)_ZN5Actor13ClosestPlayerEv(c);
     if (!pl) return;
-    if (Vec3_Dist((struct Vector3 *)(c + 0x5c), (struct Vector3 *)(pl + 0x5c)) > 0x190000) return;
-    v = *(struct Vector3 *)(pl + 0x5c);
-    if (AngleDiff(Vec3_HorzAngle((struct Vector3 *)(c + 0x5c), &v), *(short *)(c + 0x8e)) >= *(unsigned short *)(c + 0x3ec)) return;
+    if (Vec3_Dist((Vector3 *)(c + 0x5c), (Vector3 *)(pl + 0x5c)) > 0x190000) return;
+    {
+        Vector3 *plp = (Vector3 *)(int)(((long long)(int)(pl + 0x5c)) & 0xFFFFFFFFFFFFFFFFLL);
+        v.x = plp->x;
+        v.y = plp->y;
+        v.z = plp->z;
+    }
+    if (AngleDiff(Vec3_HorzAngle((Vector3 *)(c + 0x5c), &v), *(short *)(c + 0x8e)) >= *(unsigned short *)(c + 0x3ec)) return;
     *(int *)(c + 0x38c) = (int)pl;
     func_ov102_0214b384(c, 0x96);
 }

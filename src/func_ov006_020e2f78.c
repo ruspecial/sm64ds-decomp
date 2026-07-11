@@ -1,6 +1,9 @@
-// NONMATCHING: different op / idiom (div=32). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: loop strength-reduction + coloring. Logic verified vs ROM; the
+// early-return block now matches structurally (pool-materialized decrement via
+// launder). Remaining wall: mwcc strength-reduces both `for(i<5)` loops into
+// strided pointers (add #0x10 / iter) where the ROM recomputes c+(i<<4) via
+// `add rX,r4,rI,lsl#4` each iteration -- this adds 4 instrs (size 0x110 vs
+// 0x100) and is immune to source restructuring; plus pervasive r0/r1/r2 coloring.
 extern void func_ov006_020e1608(void);
 extern void PlayBank2_2D(unsigned int);
 extern void func_ov004_020adb1c(int self);
@@ -9,7 +12,7 @@ extern void func_ov006_020e2dbc(void *c);
 void func_ov006_020e2f78(char *c)
 {
     char *b;
-    short *p;
+    unsigned short *p;
     int i;
     int sum;
     int one;
@@ -18,8 +21,8 @@ void func_ov006_020e2f78(char *c)
     b = c + 0x4e00;
     if (*(unsigned short *)(b + 0xe2) != 0)
     {
-        p = (short *)(c + 0x4ee2);
-        *p = *(unsigned short *)p - 1;
+        p = (unsigned short *)(((int)c + 0x4ee2) & 0xFFFFFFFFFFFFFFFFLL);
+        *p = *p - 1;
         if (*(short *)(b + 0xe2) <= 0)
             *(short *)(b + 0xe2) = 0;
         return;

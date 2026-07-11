@@ -1,6 +1,3 @@
-// NONMATCHING: different op / idiom (div=14). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
 struct Vec3 { int x, y, z; };
 extern void _ZN5Sound9PlayBank3EjRK7Vector3(unsigned int a, void* v);
 extern void GiveLives(int delta);
@@ -12,10 +9,9 @@ void _ZN6Player16IncMegaKillCountEv(char* c){
   char* st;
   int y;
   if(*(unsigned char*)(c+0x703) == 0) return;
-  ++*(unsigned short*)(c+0x6d0);
-  st = c+0x600;
-  if(*(unsigned short*)(st+0xd0) >= 8){
-    *(unsigned short*)(st+0xd0) = 8;
+  ++*(unsigned short*)(int)(((long long)(int)(c+0x6d0)) & 0xFFFFFFFFFFFFFFFFLL);
+  if(*(unsigned short*)(c+0x600+0xd0) >= 8){
+    *(unsigned short*)(c+0x600+0xd0) = 8;
     _ZN5Sound9PlayBank3EjRK7Vector3(0x6e, c+0x74);
     GiveLives(1);
   }

@@ -24,7 +24,7 @@ void func_0204fce8(int *thiz, void *arg)
   }
 
   ((FP) thiz[6])(arg, thiz[0xc], data_020a5538, q, thiz[2], thiz[7]);
-  thiz[8]++;
+  *(int*)(int)(((long long)(int)((char*)thiz + 0x20)) & 0xFFFFFFFFFFFFFFFFLL) += 1;
   if (thiz[8] >= thiz[5])
   {
     thiz[8] = 0;

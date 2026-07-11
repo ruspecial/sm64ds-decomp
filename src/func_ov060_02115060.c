@@ -1,17 +1,23 @@
-// NONMATCHING: register allocation (div=10). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern void func_ov060_021150d0(void);
-extern void func_ov060_021150c4(void);
+extern void func_ov060_021150d0(char *);
+extern void func_ov060_021150c4(char *);
 
 void func_ov060_02115060(char *c) {
-    if (*(unsigned char *)(c + 0x415) == 0) {
-        if (*(unsigned char *)(c + 0x416) != 0) {
-            func_ov060_021150c4();
+    unsigned char t;
+    unsigned char v;
+    unsigned char w;
+    unsigned char *p;
+    v = *(unsigned char *)(c + 0x415);
+    if (v == 0) {
+        w = *(unsigned char *)(c + 0x416);
+        if (w == 0) {
+            func_ov060_021150d0(c);
         } else {
-            func_ov060_021150d0();
+            func_ov060_021150c4(c);
         }
-        (*(unsigned char *)(c + 0x415))++;
+        p = (unsigned char *)(((long long)(int)(c + 0x415)) & 0xFFFFFFFFFFFFFFFFLL);
+        t = *p;
+        t += 1;
+        *p = t;
         return;
     }
     *(unsigned char *)(c + 0x415) = 0;

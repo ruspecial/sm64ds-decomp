@@ -1,6 +1,3 @@
-// NONMATCHING: different op / idiom (div=12). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
 typedef int s32;
 extern s32 data_ov006_0212ed24[];
 extern s32 data_020a0db0;

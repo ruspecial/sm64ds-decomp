@@ -1,70 +1,76 @@
 //cpp
-// NONMATCHING: register allocation (div=52). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: scratch register rotation (div=29, was 52). All RMWs/structure now correct via
+// address-materialization levers; remaining diffs are (a) the ldrh-value/table-pool register
+// swap in the two idx blocks (ROM value->r0 table->r1, compiler emits r1/r0) and (b) case 3's
+// increment pointer r2-vs-r1 from call-setup scheduling. Same rotation wall as ov001 cluster.
+// Logic verified correct vs ROM. Counts as decompiled, not matched.
 extern "C" {
 extern short data_02082214[];
-extern void _ZN8Platform21UpdateModelPosAndRotYEv(void*);
-extern int _ZN8Platform13IsClsnInRangeE5Fix12IiES1_(void*, int, int);
-extern void _ZN8Platform19UpdateClsnPosAndRotEv(void*);
+extern void _ZN8Platform21UpdateModelPosAndRotYEv(char *);
+extern int _ZN8Platform13IsClsnInRangeE5Fix12IiES1_(char *, int, int);
+extern void _ZN8Platform19UpdateClsnPosAndRotEv(char *);
 }
 
-extern "C" int func_ov025_02112288(char* c)
+extern "C" int func_ov025_02112288(char *c)
 {
-    switch (*(unsigned char*)(c + 0x3f6)) {
+    unsigned short raw;
+    int idx, s, d, v, lim;
+    short *tb;
+
+    switch (*(unsigned char *)(c + 0x3f6)) {
     case 0:
-        if (*(unsigned char*)(c + 0x3f7) != 0) {
-            *(unsigned char*)(c + 0x3f6) = 1;
-            *(short*)(c + 0x3f4) = 0;
+        if (*(unsigned char *)(c + 0x3f7) != 0) {
+            *(unsigned char *)(c + 0x3f6) = 1;
+            *(short *)(c + 0x3f4) = 0;
         }
         break;
-    case 1: {
-        unsigned short* pa = (unsigned short*)(c + 0x3f4);
-        int idx = (int)(*pa << 0x1c) >> 0x10;
+    case 1:
+        raw = *(unsigned short *)(c + 0x3f4);
+        tb = data_02082214;
+        idx = (int)(raw << 0x1c) >> 0x10;
         idx = (int)((unsigned)(idx << 0x10) >> 0x10) >> 4;
-        int s = data_02082214[idx << 1];
-        int d = (int)(((long long)s * 0xa + 0x800) >> 0xc);
-        *(int*)(c + 0x60) = *(int*)(c + 0x374) + d;
-        if (*pa == 8) {
-            *(unsigned char*)(c + 0x3f6) = 2;
-            *(int*)(c + 0xa8) = -0xa000;
+        s = tb[idx << 1];
+        d = (int)(((long long)s * 0xa + 0x800) >> 0xc);
+        *(int *)(c + 0x60) = *(int *)(c + 0x374) + d;
+        if (*(unsigned short *)(c + 0x3f4) == 8) {
+            *(unsigned char *)(c + 0x3f6) = 2;
+            *(int *)(c + 0xa8) = -0xa000;
         }
-        *pa = *pa + 1;
+        *(unsigned short *)(int)(((long long)(int)(c + 0x3f4)) & 0xFFFFFFFFFFFFFFFFLL) += 1;
         break;
-    }
-    case 2: {
-        int v = *(int*)(c + 0x60);
-        int idx = *(unsigned char*)(c + 0x3f8);
-        int* p = (int*)(c + idx * 0xc + 0x380);
-        int lim = *p + 0x14000;
-        if (v <= lim) {
-            *(unsigned char*)(c + 0x3f8) = *(unsigned char*)(c + 0x3f8) + 1;
+    case 2:
+        v = *(int *)(c + 0x60);
+        lim = *(int *)(c + *(unsigned char *)(c + 0x3f8) * 0xc + 0x380) + 0x14000;
+        if (v <= lim)
+            *(unsigned char *)(int)(((long long)(int)(c + 0x3f8)) & 0xFFFFFFFFFFFFFFFFLL) += 1;
+        {
+            int *q = (int *)(int)(((long long)(int)(c + 0x60)) & 0xFFFFFFFFFFFFFFFFLL);
+            *q = *q + *(int *)(c + 0xa8);
         }
-        *(int*)(c + 0x60) = *(int*)(c + 0x60) + *(int*)(c + 0xa8);
-        if (*(int*)(c + 0x60) < 0x80000) {
-            *(int*)(c + 0x60) = 0x80000;
-            *(unsigned char*)(c + 0x3f6) = 3;
-            *(short*)(c + 0x3f4) = 0;
+        if (*(int *)(c + 0x60) < 0x80000) {
+            *(int *)(c + 0x60) = 0x80000;
+            *(unsigned char *)(c + 0x3f6) = 3;
+            *(short *)(c + 0x3f4) = 0;
         }
         break;
-    }
-    case 3: {
-        int idx = (int)(*(unsigned short*)(c + 0x3f4) << 0x1c) >> 0x10;
+    case 3:
+        raw = *(unsigned short *)(c + 0x3f4);
+        tb = data_02082214;
+        idx = (int)(raw << 0x1c) >> 0x10;
         idx = (int)((unsigned)(idx << 0x10) >> 0x10) >> 4;
-        int s = data_02082214[idx << 1];
-        int d = (int)(((long long)s * 0xa + 0x800) >> 0xc);
-        *(int*)(c + 0x60) = d + 0x80000;
-        if (*(unsigned short*)(c + 0x3f4) >= 8) {
-            *(int*)(c + 0xa8) = 0;
-            *(int*)(c + 0x60) = 0x80000;
+        s = tb[idx << 1];
+        d = (int)(((long long)s * 0xa + 0x800) >> 0xc);
+        *(int *)(c + 0x60) = d + 0x80000;
+        if (*(unsigned short *)(c + 0x3f4) >= 8) {
+            *(int *)(c + 0xa8) = 0;
+            *(int *)(c + 0x60) = 0x80000;
         }
-        *(unsigned short*)(c + 0x3f4) = *(unsigned short*)(c + 0x3f4) + 1;
+        *(unsigned short *)(int)(((long long)(int)(c + 0x3f4)) & 0xFFFFFFFFFFFFFFFFLL) += 1;
         _ZN8Platform21UpdateModelPosAndRotYEv(c);
         if (_ZN8Platform13IsClsnInRangeE5Fix12IiES1_(c, 0, 0))
             _ZN8Platform19UpdateClsnPosAndRotEv(c);
-        *(unsigned char*)(c + 0x3f7) = 0;
+        *(unsigned char *)(c + 0x3f7) = 0;
         break;
-    }
     }
     return 1;
 }

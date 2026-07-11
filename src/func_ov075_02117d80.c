@@ -9,15 +9,16 @@ extern unsigned char data_0209d454;
 extern int data_ov075_0211d71c;
 extern int data_ov075_0211d810[];
 
+typedef struct { int a, b; } TwoInt;
+
 void func_ov075_02117d80(char *c)
 {
     int fh;
-    int v0, v1;
-    unsigned char cond;
+    int cond;
 
     data_0209d454 = data_0209d454 & ~1;
-    cond = *(unsigned short *)(c + 0xc) == 6;
-    if (cond)
+    cond = (int)(*(unsigned short *)(c + 0xc) == 6);
+    if (cond != 0)
     {
         func_02034414(0x19);
     }
@@ -27,11 +28,8 @@ void func_ov075_02117d80(char *c)
         fh = LoadFile(0x9802);
         func_ov075_02116030(&data_ov075_0211d71c, fh);
         func_02034414(0x16);
-        v0 = data_ov075_0211d810[4];
-        v1 = data_ov075_0211d810[5];
         data_0209d454 = data_0209d454 | 4;
-        *(int *)(c + 0x64) = v0;
-        *(int *)(c + 0x68) = v1;
+        *(TwoInt *)(c + 0x64) = *(TwoInt *)((char *)data_ov075_0211d810 + 0x10);
     }
     data_0209d454 = data_0209d454 | 1;
     *(unsigned char *)(c + 0x280) = 2;

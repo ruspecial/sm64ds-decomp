@@ -1,7 +1,4 @@
-// NONMATCHING: register allocation (div=15). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern int func_ov004_020b56c8(int);
+extern void func_ov004_020b56c8(int);
 extern short data_ov004_020bf9e4;
 
 struct S5300 {
@@ -14,19 +11,22 @@ struct S5300 {
 void func_ov006_020f6488(char *c)
 {
     struct S5300 *s = (struct S5300 *)(c + 0x5300);
+    unsigned char *h;
     unsigned short *t;
     if (s->timer != 0) {
-        t = (unsigned short *)(c + 0x53e2);
+        t = (unsigned short *)(int)(((long long)(int)(c + 0x53e2)) & 0xFFFFFFFFFFFFFFFFLL);
         t[0] = t[0] - 1;
         if (s->timer != 0)
             return;
-        if (*(unsigned char *)(c + 0x5405) < s->fea)
+        c += 0x5000;
+        if (((unsigned char *)c)[0x405] < s->fea)
             return;
-        func_ov004_020b56c8((5 - *(unsigned char *)(c + 0x5408)) * 5);
+        func_ov004_020b56c8((5 - ((unsigned char *)c)[0x408]) * 5);
         return;
     }
     if (data_ov004_020bf9e4 == 1) {
         s->timer = 0;
-        *(int *)(c + 0x53d8) = 2;
+        h = (unsigned char *)(c + 0x5000);
+        *(int *)(h + 0x3d8) = 2;
     }
 }

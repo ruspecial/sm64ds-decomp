@@ -28,8 +28,9 @@ void func_ov002_020ef57c(char* c){
   *(short*)(c+0x44a) = 0;
   *(int*)(c+0x444) = *(int*)(c+0x60);
   {
-    int b2 = (*(unsigned short*)(c+0xc) == 0x82);
-    if (b2 == 0) return;
+    int b2 = (int)(*(unsigned short*)(c+0xc) == 0x82);
+    if ((int)(((long long)b2) & 0xFFFFFFFFFFFFFFFFLL) != 0) {
+      *(int*)(c+0x98) = Vec3_HorzDist(c+0x5c, c+0x68);
+    }
   }
-  *(int*)(c+0x98) = Vec3_HorzDist(c+0x5c, c+0x68);
 }

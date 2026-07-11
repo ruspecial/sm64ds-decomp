@@ -1,25 +1,29 @@
-// NONMATCHING: different op / idiom (div=11). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern void func_0205e280(void);
+extern int func_0205e280(char *c);
 
 int func_0205e7e0(unsigned int *thiz, unsigned char *out)
 {
+    unsigned int v;
     int i;
-    unsigned int r;
+
     if (thiz == 0 || out == 0) return 1;
-    r = thiz[0x19];
-    if (r != 0) return r;
-    if (thiz[0x18] == 0) {
+    v = thiz[0x19];
+    if (v != 0) return v;
+    v = thiz[0x18];
+    if (v == 0) {
         char *p = (char*)thiz;
-        func_0205e280();
-        for (i = 0; i < 0x40; i++)
-            (p + i)[0x20] = 0;
-        thiz[5] = 0;
-        thiz[6] = 0;
+        func_0205e280(p);
+        i = 0;
+        v = 0;
+        for (; i < 0x40; i++)
+            (p + i)[0x20] = v;
+        thiz[5] = v;
+        thiz[6] = v;
         thiz[0x18] = 1;
     }
-    for (i = 0; i < 0x14; i++)
-        out[i] = (unsigned char)(thiz[i >> 2] >> ((3 - (i & 3)) * 8));
+    for (i = 0; i < 0x14; i++) {
+        v = i >> 2;
+        v = thiz[v];
+        out[i] = (unsigned char)(v >> ((3 - (i & 3)) * 8));
+    }
     return 0;
 }

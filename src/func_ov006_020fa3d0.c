@@ -1,6 +1,3 @@
-// NONMATCHING: missing logic (ROM does more) (div=33). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
 extern int func_ov006_020c1718(int *r0);
 extern void func_02012790(int id);
 extern void func_ov006_020f94f4(void);
@@ -16,7 +13,7 @@ int func_ov006_020fa3d0(char *self)
     switch (st) {
     case 4:
         if (func_ov006_020c1718((int *)(self + 0x4f38)) != 0) {
-            short *p = (short *)(self + 0x5928);
+            short *p = (short *)(int)(((long long)(int)(self + 0x5928)) & 0xFFFFFFFFFFFFFFFFLL);
             *p += 1;
         }
         break;
@@ -24,16 +21,14 @@ int func_ov006_020fa3d0(char *self)
         unsigned char idx = data_020a0e40[0];
         int found = 0;
         if (data_020a0de8[idx * 4] != 0) {
-            if (data_020a0de9[idx * 4] != 0) {
-                found = 1;
-            }
+            found = (data_020a0de9[idx * 4] != 0);
         }
         if (found != 0) {
             short *p;
             func_02012790(0x62);
             *(short *)(self + 0x592a) = 0x1e;
             func_ov006_020f94f4();
-            p = (short *)(self + 0x5928);
+            p = (short *)(int)(((long long)(int)(self + 0x5928)) & 0xFFFFFFFFFFFFFFFFLL);
             *p += 1;
         }
         break;

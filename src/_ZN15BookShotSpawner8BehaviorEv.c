@@ -1,7 +1,6 @@
 //cpp
-// NONMATCHING: different op / idiom (div=17). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NEAR-MISS div=2: sole divergence is register coloring on the guard temp
+// (ldrh/cmp use r0 vs ROM r1); logic byte-identical otherwise at mwccarm 1.2/sp2p3.
 extern "C" {
 struct Vector3 { int x, y, z; };
 struct Vector3_16;
@@ -13,11 +12,12 @@ extern void* _ZN5Actor5SpawnEjjRK7Vector3PK10Vector3_16ii(unsigned int a, unsign
 
 int _ZN15BookShotSpawner8BehaviorEv(char* c)
 {
+    char* p;
     if (*(unsigned short*)(c + 0xd4) > 0x28) {
-        char* p = (char*)_ZN5Actor13ClosestPlayerEv();
+        p = (char*)_ZN5Actor13ClosestPlayerEv();
         if (p != 0) {
             Vector3 tmp;
-            Vector3* ps = (Vector3*)(p + 0x5c);
+            Vector3* ps = (Vector3*)(int)(((long long)(int)(p + 0x5c)) & 0xFFFFFFFFFFFFFFFFLL);
             tmp.x = ps->x;
             tmp.y = ps->y;
             tmp.z = ps->z;
@@ -32,7 +32,7 @@ int _ZN15BookShotSpawner8BehaviorEv(char* c)
             }
         }
     } else {
-        *(short*)(c + 0xd4) += 1;
+        *(unsigned short*)(((int)c + 0xd4) & 0xFFFFFFFFFFFFFFFFLL) += 1;
     }
     return 1;
 }

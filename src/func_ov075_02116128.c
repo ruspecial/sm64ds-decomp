@@ -1,24 +1,19 @@
-//cpp
-// NONMATCHING: register allocation (div=31). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern "C" {
-unsigned short *_ZN2G212GetBG1ScrPtrEv();
-int func_02030958(int val);
-}
+extern unsigned short *_ZN2G212GetBG1ScrPtrEv(void);
+extern int func_02030958(int val);
 extern unsigned char data_0209fc50;
 
-extern "C" void func_ov075_02116128(int unused, int r6, int r5)
+void func_ov075_02116128(int unused, int r6, int r5)
 {
     int b = data_0209fc50;
     unsigned short *bg = _ZN2G212GetBG1ScrPtrEv();
     int a = func_02030958(r6);
     int t = 4 - b;
     int m = r6 * (t * 0x20 + 0xa0) + (t * 0x40 + 0x84);
-    unsigned short *p = bg + m;
+    unsigned int hi;
     unsigned int angle;
     int i;
-    unsigned int hi;
+    unsigned short *p;
+    p = bg + m;
     angle = (unsigned short)(a + 0xa);
     if (r5 != 0)
         angle = (unsigned short)(angle - 4);

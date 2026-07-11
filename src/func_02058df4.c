@@ -1,34 +1,41 @@
-// NONMATCHING: different op / idiom (div=15). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern int data_023c0000;
-extern int gMainRamFlag;
+typedef signed int s32;
+typedef unsigned int u32;
 
-int func_02058df4(unsigned int idx)
+extern int SDK_AUTOLOAD_DTCM_START[];
+extern int SDK_SYS_STACKSIZE;
+extern int SDK_IRQ_STACKSIZE;
+extern int SDK_SECTION_ARENA_DTCM_START[];
+
+void *func_02058df4(u32 id)
 {
-    switch (idx) {
+    switch (id) {
     case 0:
-        return 0x23c0000;
+        return (void *)0x023c0000;
     case 2:
-        return 0x2700000;
+        return (void *)0x02700000;
     case 3:
-        return 0x2000000;
+        return (void *)0x02000000;
     case 4:
     {
-        int base = (int)&data_023c0000;
-        int v = gMainRamFlag;
-        int lim = (base + 0x3f80) - 0x600;
-        if (v == 0) {
-            if (base < 0x23c0020) base = 0x23c0020;
-            return base;
+        u32 lo = (u32)SDK_AUTOLOAD_DTCM_START;
+        u32 irqStackLo = (lo + 0x3f80) - (s32)&SDK_IRQ_STACKSIZE;
+        s32 sysStackSize = (s32)&SDK_SYS_STACKSIZE;
+        if (sysStackSize == 0) {
+            sysStackSize = (s32)SDK_SECTION_ARENA_DTCM_START;
+            if (lo < (u32)sysStackSize) {
+                lo = (u32)sysStackSize;
+            }
+            return (void *)lo;
         }
-        if (v < 0) return base - v;
-        return lim - v;
+        if (sysStackSize < 0) {
+            return (void *)(lo - sysStackSize);
+        }
+        return (void *)(irqStackLo - sysStackSize);
     }
     case 5:
-        return 0x27ff800;
+        return (void *)0x027ff800;
     case 6:
-        return 0x37f8000;
+        return (void *)0x037f8000;
     default:
         return 0;
     }

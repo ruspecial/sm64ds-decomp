@@ -1,13 +1,16 @@
-// NONMATCHING: different op / idiom (div=29). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: logic verified correct vs ROM. ROM keeps a per-iteration element
+// pointer computed as (c+i)+0x53fd with pre-indexed writeback (ldrb [r0,r6]!),
+// reused for the 0xff store. mwcc 1.2/sp2p3 instead hoists the loop-invariant
+// c+0x53fd and uses base+index addressing; direct/q-split/launder all fail to
+// reproduce the writeback idiom. ~28 word div, all cascade from this.
 extern void _ZN5Sound12PlayBank2_2DEj(unsigned int);
 
 void func_ov006_020f6904(char *c)
 {
     int cntA = 0;
     int cntB = 0;
-    for (int i = 0; i < 8; i++) {
+    int i;
+    for (i = 0; i < 8; i++) {
         unsigned char id = *(unsigned char*)(c + 0x53fd + i);
         if (id == 0xff) continue;
         if (*(unsigned char*)(c + id * 24 + 0x51bb) == 0) {

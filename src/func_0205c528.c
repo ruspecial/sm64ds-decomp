@@ -1,45 +1,29 @@
-//cpp
-// NONMATCHING: base materialization / addressing (div=22). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-extern "C" {
-    int _ZN3IRQ7DisableEv(void);
-    void _ZN3IRQ7RestoreEj(unsigned int);
-    void func_020580f0(void *p);
-}
+typedef int (*M44)(void *self, int a, int b, int c);
 
-struct Obj;
-typedef int (*M44)(Obj *self, int a, int b, int c);
-struct Obj {
-    int f0, f4, f8, fc, f10;
-    int pad[12];
-    M44 m44;
-};
-struct Outer {
-    Obj *obj;
-    int f4;
-};
+extern int _ZN3IRQ7DisableEv(void);
+extern void _ZN3IRQ7RestoreEj(unsigned int);
+extern void func_020580f0(void *p);
 
-extern "C" void func_0205c528(Outer *thiz, int r1, int r7)
+void func_0205c528(char *thiz, int r1, int r7)
 {
-    Obj *o = thiz->obj;
+    char *o = *(char**)thiz;
     int res;
-    o->f10 |= 0x200;
-    res = o->m44(o, r1, thiz->f4, r7);
-    if (res == 0) goto clr;
-    if (res == 1) goto clr;
-    if (res == 6) {
+    *(int*)(int)(((long long)(int)(o + 0x10)) & 0xFFFFFFFFFFFFFFFFLL) |= 0x200;
+    res = (*(M44*)(o + 0x44))(o, r1, *(int*)(thiz + 4), r7);
+    switch (res) {
+    case 0:
+    case 1:
+        *(int*)(int)(((unsigned long long)(unsigned)(o + 0x10)) & 0xFFFFFFFFFFFFFFFFULL) &= ~0x200;
+        break;
+    case 6: {
         unsigned int saved = (unsigned int)_ZN3IRQ7DisableEv();
         int loop;
-        do {
-            func_020580f0(&o->fc);
-            loop = (o->f10 & 0x200) ? 1 : 0;
-        } while (loop);
+        while ((loop = ((*(int*)(o + 0x10) & 0x200) ? 1 : 0)) != 0) {
+            func_020580f0(o + 0xc);
+        }
         _ZN3IRQ7RestoreEj(saved);
+        break;
     }
-    goto end;
-clr:
-    o->f10 &= ~0x200;
-end:
-    thiz->f4 += r7;
+    }
+    *(int*)(int)(((long long)(int)(thiz + 4)) & 0xFFFFFFFFFFFFFFFFLL) += r7;
 }

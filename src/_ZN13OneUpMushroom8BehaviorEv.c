@@ -1,39 +1,40 @@
 //cpp
-// NONMATCHING: register allocation (div=18). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
-struct C;
-typedef void (C::*PMF)();
-struct C {
-  char pad[0x500];
-};
-extern "C" {
-extern int _ZN5Enemy14UpdateYoshiEatER12WithMeshClsn(char* c, char* clsn);
-extern void func_ov002_020af4ec(char* c);
-extern void _ZN12CylinderClsn5ClearEv(char* c);
-extern void _ZN12CylinderClsn6UpdateEv(char* c);
+struct WithMeshClsn;
+struct OneUpMushroom;
+typedef void (OneUpMushroom::*PMF)();
 extern PMF data_ov002_0210dc00[];
-int _ZN13OneUpMushroom8BehaviorEv(char* c){
-  if(_ZN5Enemy14UpdateYoshiEatER12WithMeshClsn(c, c+0x144) != 0){
-    func_ov002_020af4ec(c);
-    _ZN12CylinderClsn5ClearEv(c+0x110);
-    return 1;
-  }
-  *(int*)(c+0xd0) = 0;
-  {
-    int old = *(int*)(c+0x388);
-    C* self = (C*)c;
-    (self->*data_ov002_0210dc00[*(int*)(c+0x384)])();
-    ++*(unsigned short*)(c+0x100);
-    ++*(unsigned short*)(c+0x38c);
-    if(old != *(int*)(c+0x388)){
-      *(unsigned short*)(c+0x100) = 0;
-      *(unsigned short*)(c+0x300+0x8c) = 0;
-    }
-  }
-  _ZN12CylinderClsn5ClearEv(c+0x110);
-  _ZN12CylinderClsn6UpdateEv(c+0x110);
-  func_ov002_020af4ec(c);
-  return 1;
+extern "C" {
+extern int _ZN5Enemy14UpdateYoshiEatER12WithMeshClsn(OneUpMushroom *thiz, WithMeshClsn *clsn);
+extern void func_ov002_020af4ec(OneUpMushroom *thiz);
+extern void _ZN12CylinderClsn5ClearEv(void *thiz);
+extern void _ZN12CylinderClsn6UpdateEv(void *thiz);
 }
+struct OneUpMushroom { char pad[0x500]; };
+extern "C" int _ZN13OneUpMushroom8BehaviorEv(OneUpMushroom *thiz)
+{
+    char *c = (char *)thiz;
+    if (_ZN5Enemy14UpdateYoshiEatER12WithMeshClsn(thiz, (WithMeshClsn *)(c + 0x144)) != 0) {
+        func_ov002_020af4ec(thiz);
+        _ZN12CylinderClsn5ClearEv(c + 0x110);
+        return 1;
+    }
+    *(int *)(c + 0xd0) = 0;
+    {
+        int old = *(int *)(c + 0x388);
+        (thiz->*data_ov002_0210dc00[*(int *)(c + 0x384)])();
+        {
+            unsigned short *p100 = (unsigned short *)(c + 0x100);
+            unsigned short *p38c = (unsigned short *)(int)(((long long)(int)(c + 0x38c)) & 0xFFFFFFFFFFFFFFFFLL);
+            *p100 += 1;
+            *p38c += 1;
+            if (old != *(int *)(c + 0x388)) {
+                *p100 = 0;
+                *(unsigned short *)(c + 0x38c) = 0;
+            }
+        }
+    }
+    _ZN12CylinderClsn5ClearEv(c + 0x110);
+    _ZN12CylinderClsn6UpdateEv(c + 0x110);
+    func_ov002_020af4ec(thiz);
+    return 1;
 }

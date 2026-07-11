@@ -1,9 +1,4 @@
-//cpp
-// NONMATCHING: register allocation (div=29). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
 struct S2 { int a, b; };
-extern "C" {
 extern struct S2 data_ov002_0210c040;
 extern struct S2 data_ov002_0210c010;
 extern struct S2 data_ov002_0210c020;
@@ -20,5 +15,4 @@ void __sinit_ov002_02107f88(void) {
     data_ov002_0211110c[4] = data_ov002_0210c030;
     data_ov002_0211110c[5] = data_ov002_0210c018;
     data_ov002_0211110c[6] = data_ov002_0210c028;
-}
 }

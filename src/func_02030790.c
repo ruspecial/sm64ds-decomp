@@ -1,6 +1,7 @@
-// NONMATCHING: different op / idiom (div=15). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NEAR-MISS (+4 insns): first 21 insns match exactly (incl. predicated first
+// guard). The two inner condition-exits get lowered to predicated returns
+// (addeq/ldmeq/bxeq) where the ROM branches (beq) to a shared epilogue. mwcc's
+// predicate-vs-branch idiom choice, not steerable from C at 1.2/sp2p3.
 extern void func_0203da2c(int v);
 extern void func_02030500(void);
 extern void func_02019a58(void);
@@ -31,5 +32,4 @@ void func_02030790(void)
         func_0201ffcc();
         func_020199a4();
     }
-    return;
 }

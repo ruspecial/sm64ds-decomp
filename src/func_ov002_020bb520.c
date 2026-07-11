@@ -18,7 +18,7 @@ int func_ov002_020bb520(char* self){
   if (*(u8*)(self+0x58e) == 0) return 0;
   {
     char* other = (char*)_ZN5Actor10FindWithIDEj(id);
-    if (!(other != 0 && *(u16*)(other+0xc) == 0xbf)) {
+    if (!(other != 0 && (int)(((long long)(*(u16*)(other+0xc) == 0xbf)) & 0xFFFFFFFFFFFFFFFFLL) != 0)) {
       return 0;
     } else {
       int ang = Vec3_HorzAngle((struct Vector3*)(self+0x5c), (struct Vector3*)(other+0x5c));

@@ -1,6 +1,7 @@
-// NONMATCHING: extra logic (you do more) (div=19). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NONMATCHING: scheduling + coloring (div=7). Logic verified correct vs ROM.
+// Remaining diffs: a 2-instruction schedule swap (str c->0x40 vs the &t pool
+// load) and the coupled register coloring of the smull block (rv in r0 vs r2).
+// Both are pure scheduling/coloring, immune to source reordering at 1.2/sp2p3.
 extern int RandomIntInternal(int *seed);
 extern void _ZN9ModelAnim7SetAnimEP8BCA_Filei5Fix12IiEj(void *thiz, void *bca, int a, int fix, unsigned int b);
 extern void func_ov006_020ca2ec(void *c);
@@ -10,7 +11,10 @@ extern void *data_ov006_02140580;
 
 void func_ov006_020c9d7c(char *c)
 {
-    *(short*)(c + 0x6c) = (short)(*(short*)(c + 0x6c) - 1);
+    {
+        short* p = (short*)(((int)c + 0x6c) & 0xFFFFFFFFFFFFFFFFLL);
+        *p = (short)(*p - 1);
+    }
     if (*(short*)(c + 0x6c) != 0) {
         *(int*)(c + 0x28) = 0x100000;
         *(int*)(c + 0x40) = 0;

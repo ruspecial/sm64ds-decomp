@@ -1,6 +1,8 @@
-// NONMATCHING: different op / idiom (div=17). Logic verified correct vs ROM; not
-// byte-matchable from C at mwccarm 1.2/sp2p3 (see notes/matching-style.md).
-// Counts as decompiled, not matched.
+// NEAR-MISS (~div 8): logic verified vs ROM. Sole remaining wall is mwcc CSE-
+// hoisting the halfword truncation of the loop counter i (lsl/lsr) for the four
+// strh field stores, where the ROM strh's the counter register directly. Immune
+// to signed/unsigned counter, short vs u16 field cast, and store reordering
+// (store order is fixed by the ROM). Counts as decompiled, not matched.
 typedef unsigned char u8;
 typedef unsigned short u16;
 
@@ -19,6 +21,7 @@ void func_020652fc(int a, int b, int c)
 {
     unsigned int saved = _ZN3IRQ7DisableEv();
     int i;
+    int j;
     char *p;
     int local[0x27];
 
@@ -39,10 +42,11 @@ void func_020652fc(int a, int b, int c)
         *(u16 *)(p + 0x140) = i;
         *(u16 *)(p + 0x142) = i;
         *(int *)(p + 0x148) = c;
-        *(u8 *)(p + 0x1d7) = i;
+        j = i;
+        *(u8 *)(p + 0x1d7) = j;
         p += 0x68;
     }
-    local[0] = i;
+    local[0] = j;
     func_02065af0(local);
     func_02065be0();
     func_02065ba0(a - 0xe);
