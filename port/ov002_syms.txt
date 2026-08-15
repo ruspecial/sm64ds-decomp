@@ -259,3 +259,67 @@ PoppingLavaBubbles_SpawnInfo
 # mounting it would hand the factory a table of DS code addresses.
 data_ov002_0210af00 data_ov002_0210d7d4
 data_ov002_0210aeb8 data_ov002_0210aec0 data_ov002_0210aec8
+
+# ---- run linkw wave 3 / lane w9a: THE STAGE CLASS'S SPRITE TEMPLATES -------
+#
+# Thirty-three symbols the four unwired Stage render TUs name and nothing in
+# the port defines yet. They are the level-complete card, the two VS-mode
+# overlays and the pause menu's own sprites: OamAttr lists, every one.
+#
+# THEY ARE .data, NOT .bss, AND THE PORT'S OWN LAYOUT SAYS SO. Worth stating
+# because the lane brief called them bss and put ov002's bss at 0x0210a1a0.
+# Re-derived two ways and they agree:
+#   extracted/dsd/arm9_overlays/overlays.yaml  id 2: base_address 34264672 =
+#     0x020ad660, ram_size 394048 = 0x60340 -> image ends 0x0210d9a0;
+#     bss_size 14336 = 0x3800 -> window ends 0x021111a0.
+#   config/arm9/overlays/ov002/delinks.txt    .data start:0x02108140
+#     end:0x0210d9a0, .bss start:0x0210d9a0 end:0x021111a0.
+# Every address below is < 0x0210d9a0, so every one is IMAGE-BACKED and mounts
+# real overlay bytes read at file offset addr - 0x020ad660. config agrees a
+# third time: it spells all thirty-three kind:data(any), while the ov002 bss
+# symbols this file already mounts (data_ov002_0211117c..02111190) are spelled
+# kind:bss. Nothing here is zero storage.
+#
+# SIZES ARE THE PLAIN NEXT-SYMBOL DELTA -- no `:0x..` override on any row --
+# and the ROM CHECKS EVERY ONE OF THEM. OamAttr is { u32 a01; u16 a2; u16 a3; }
+# and OAM::Render stops after the entry whose a3 reads 0xffff, so a list has a
+# self-declared length. Walking each of the thirty-three out of
+# extracted/overlays/overlay_0002.bin, the terminator lands on the LAST entry
+# of the next-symbol delta in all thirty-three cases -- 0x0210cf28 is 0x50 by
+# delta and 0x50 by terminator, 0x0210d130 is 0x58 both ways, and so on down.
+# That is the dsd-labels-shifted-one-symbol trap coming back clean here: a
+# label off by one would put the terminator in the wrong array.
+#
+# LC_Render's ten (the level-complete card: "COURSE N", the star row and the
+# two number strips).
+data_ov002_0210caf4 data_ov002_0210cb14 data_ov002_0210ce90 data_ov002_0210cea8
+data_ov002_0210ced0 data_ov002_0210cee8 data_ov002_0210cf08 data_ov002_0210cf28
+data_ov002_0210cf78 data_ov002_0210cfa0
+# RenderVsModeNewStar's four lists plus its own banner template. VS_NEW_STAR_
+# APPEARED sits at 0x0210d250, immediately after data_ov002_0210d210 (which is
+# RenderVsModeCountdown's) -- the two TUs interleave in the ROM's data.
+data_ov002_0210cfd0 data_ov002_0210d050 data_ov002_0210d0e8 data_ov002_0210d188
+_ZN3OAM20VS_NEW_STAR_APPEAREDE
+# RenderVsModeCountdown's ten: the five digit strips at 0x0210d008..0x0210d210
+# and the five small ones at 0x0210d378..0x0210d420.
+data_ov002_0210d008 data_ov002_0210d098 data_ov002_0210d130 data_ov002_0210d1c8
+data_ov002_0210d210 data_ov002_0210d378 data_ov002_0210d3a0 data_ov002_0210d3c0
+data_ov002_0210d3e0 data_ov002_0210d420
+# PS_Render's eight (the pause screen: the PAUSE word, the two page arrows and
+# their small variants, the minimap's small star and the tiny star). VS_PAUSE
+# is the versus-mode spelling of the same word and lands at 0x0210cb4c, right
+# after LC_Render's data_ov002_0210cb14.
+#
+# SEVEN OF THESE EIGHT ARE INSIDE port_ov002_gap_0210c548, the 1452-byte
+# synthetic block ovdata's make_covering docstring names by hand, so naming
+# them CHANGES an existing answer: rule 1 of that function prefers a named
+# symbol over a gap block, and a pointer that used to rebase onto
+# gap_0210c548 + k now rebases onto the named array + 0. That is safe here for
+# the reason the terminator check above establishes -- each of the seven lists
+# ends inside its own next-symbol extent (MM_SMALL_STAR and TINY_STAR are a
+# single entry, the arrows two), so no walk that used to run inside the gap
+# block runs off the shorter named array. The gap block keeps its own copy of
+# the same ROM bytes either way; only which host array a pointer names moves.
+_ZN3OAM13MM_SMALL_STARE _ZN3OAM9TINY_STARE _ZN3OAM5PAUSEE _ZN3OAM8VS_PAUSEE
+_ZN3OAM19ARROW_POINTING_LEFTE _ZN3OAM20ARROW_POINTING_RIGHTE
+_ZN3OAM25SMALL_ARROW_POINTING_LEFTE _ZN3OAM26SMALL_ARROW_POINTING_RIGHTE
