@@ -166,3 +166,70 @@ data_ov001_020ad5dc data_ov001_020ad640
 # added beside it, both in hal/sub_actors.cpp, which is not this lane's file.
 # The measurement and the handoff are in port/slice_w1l5.txt under LANE w4-e.
 _ZN3OAM14BOUNCING_ARROWE
+
+# ---------------------------------------------------------------------------
+# run linkw wave 3 (lane w9a): THE PAUSE MENU'S CONTROLLER-MODE TEXTS.
+#
+# Stage::PS_Render draws the pause screen's control-scheme caption from five
+# POINTER TABLES, one per system language, each indexed by the control mode in
+# data_0209f2dc:
+#
+#   GetOwnerLanguage() 5 -> func_020abd98   4 -> func_020ac218
+#                      3 -> func_020ac64c   2 -> func_020acb68
+#                   else -> func_020ad04c
+#
+# and one more sprite, func_020abac0, for the empty small star. All six are the
+# ov000/ov001 shared-base misattribution this file's header describes: dsd
+# could not attribute the address, config carries both spellings, and the ov001
+# one is the OamAttr data. Two of the six config names are the readable ones --
+# 0x020abac0 is _ZN3OAM16SMALL_STAR_EMPTYE (already mounted at the top of this
+# file, so it needs no new row) and 0x020ad04c is
+# _ZN3OAM21CONTROLLER_MODE_TEXTSE, whose three entries config names
+# STANDARD_MODE_TEXT / TOUCH_MODE_TEXT / DUAL_HAND_MODE_TEXT. That naming is
+# the check that these five tables are one object per language and not five
+# unrelated things.
+#
+# THE TARGETS ARE MOUNTED WITH THE TABLES, and that is the whole point of the
+# rows below. Until now every byte from 0x020abd98 to 0x020ad470 was inside
+# pk001_gap_020abd98[5848] -- the --pack ZERO pad this file's wave-3 block
+# describes. OAM::Render is handed one of these list pointers and WALKS it to
+# the 0xffff terminator, so a table of pointers into zero pad is the unbounded
+# walk port/CMakeLists.txt's cross-pass note describes. Mounting the five
+# tables alone would not fix that: it would give real pointers into DS main RAM
+# instead. So each table's targets are named too, all sixteen of them.
+#
+# EVERY EXTENT IS CHECKED AGAINST THE ROM, not assumed. OamAttr is
+# { u32 a01; u16 a2; u16 a3; } and the list ends after a3 == 0xffff. Walking
+# each of the sixteen out of extracted/overlays/overlay_0001.bin (base
+# 0x020aa420, 12800 bytes), the terminator lands exactly on the next config
+# symbol in all sixteen cases -- 0x020abf20 is 0x158 by next-symbol delta and
+# 0x158 by terminator (43 entries), 0x020ad2d0 is 0x180 both ways (48), and so
+# on. Same result the w4-e BOUNCING_ARROW block reports for its two entries,
+# sixteen more times. So every row below is sized by its plain next-symbol
+# delta with no `:0x..` override, and no walk runs off its array.
+#
+# All twenty-one are IMAGE-BACKED: ov001's .data runs 0x020ab800..0x020ad620
+# (config/arm9/overlays/ov001/delinks.txt) and its bss is the 64 bytes
+# 0x020ad620..0x020ad660 (overlays.yaml id 1: base_address 34251808 =
+# 0x020aa420, ram_size 12800, bss_size 64). Every address here is below
+# 0x020ad620, so each mounts real bytes at file offset addr - 0x020aa420.
+#
+# THE SIXTH NAME, func_020abac0, IS NOT A ROW. Its storage is already here.
+# What PS_Render needs beyond storage is the func_* -> config-name alias, and
+# hal/sub_actors.cpp -- which carries the other six ov001 aliases -- is not
+# this lane's file. See the CMakeLists per-source rename this lane lands
+# instead, the R1/R2/w6-D remedy.
+#
+# language 5's table (four words; the fourth points at the list immediately
+# following it, and data_0209f2dc never reaches index 3) and its four lists.
+data_ov001_020abd98 data_ov001_020abda8 data_ov001_020abdd8 data_ov001_020abf20
+data_ov001_020ac078
+# language 4's table and its three lists.
+data_ov001_020ac218 data_ov001_020ac224 data_ov001_020ac35c data_ov001_020ac4ac
+# language 3's table and its three lists.
+data_ov001_020ac64c data_ov001_020ac658 data_ov001_020ac7e0 data_ov001_020ac980
+# language 2's table and its three lists.
+data_ov001_020acb68 data_ov001_020acb74 data_ov001_020accfc data_ov001_020ace84
+# the default table and its three, the only ones config spells readably.
+_ZN3OAM21CONTROLLER_MODE_TEXTSE _ZN3OAM15TOUCH_MODE_TEXTE
+_ZN3OAM18STANDARD_MODE_TEXTE _ZN3OAM19DUAL_HAND_MODE_TEXTE
